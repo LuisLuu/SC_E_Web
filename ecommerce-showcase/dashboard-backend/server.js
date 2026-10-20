@@ -2,6 +2,15 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 
+// --- MQTT & WEBSOCKET BROKER IMPORTS ---
+const AedesPackage = require('aedes');
+const AedesClass = typeof AedesPackage === 'function' ? AedesPackage : (AedesPackage.Aedes || AedesPackage.default);
+const aedes = new AedesClass();
+
+const net = require('net');
+const http = require('http');
+const ws = require('websocket-stream');
+
 const { routeIntent } = require('./agent/router');
 const { executeAction } = require('./agent/executor');
 const { synthesizeResponse } = require('./agent/synthesizer');
@@ -12,6 +21,19 @@ const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// 1. Start Standard MQTT for ESP32 (Port 1883)
+const tcpServer = net.createServer(aedes.handle);
+tcpServer.listen(1883, () => {
+  console.log('📡 TCP MQTT Broker running on port 1883 (For ESP32)');
+});
+
+// 2. Start WebSocket MQTT for React Dashboard (Port 9001)
+const httpServer = http.createServer();
+ws.createServer({ server: httpServer }, aedes.handle);
+httpServer.listen(9001, () => {
+  console.log('🌐 WebSocket MQTT Broker running on port 9001 (For React UI)');
+});
 
 const db = new sqlite3.Database('./iot_core.db', (err) => {
   if (err) console.error('Database connection failed:', err.message);
@@ -169,7 +191,7 @@ app.post('/api/agent', async (req, res) => {
       vectorContext = await queryMemory(prompt);
     } 
     // Trigger Layer 2 for Tools (NO DUPLICATES)
-    else if (intent === 'DATABASE_ACTION' || intent === 'WEB_SEARCH') {
+    else if (intent === 'DATABASE_ACTION' || intent === 'WEB_SEARCH' || intent === 'HARDWARE_ACTION') {
       actionResult = await executeAction(prompt, db, 'llama3.1:8b');
     }
 

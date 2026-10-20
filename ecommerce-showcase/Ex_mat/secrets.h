@@ -1,0 +1,3 @@
+#define SECRET_SSID "Lau 1"
+#define SECRET_PASS "08102004"
+#define SECRET_MQTT_IP "192.168.1.27"

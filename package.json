@@ -1,11 +1,13 @@
 {
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
+    "aedes": "^1.2.0",
     "chromadb": "^3.5.0",
     "duck-duck-scrape": "^2.2.7",
     "lucide-react": "^1.57.0",
     "react-redux": "^9.3.0",
-    "react-router-dom": "^7.18.4"
+    "react-router-dom": "^7.18.4",
+    "websocket-stream": "^5.5.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.6.1",

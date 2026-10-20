@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+npm-debug.log
+.env
+
+# React / Frontend Builds
+dist/
+build/
+
+# Firmware / Secrets
+firmware/secrets.h
+*.bin
+*.elf
+
+# Database (NEVER commit the live SQLite DB)
+dashboard-backend/iot_core.db
+dashboard-backend/iot_core.db-journal
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
